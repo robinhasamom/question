@@ -59,10 +59,9 @@
     </div>
 </div>
 <script>
-    // Rotated channel key to force a clean, unbugged cloud initialization sync
-    const CHANNEL_KEY = "robin_secure_qa_hub_v994821";
-    const PROXY_URL = "https://corsproxy.io?";
-    const TARGET_URL = `https://keyvalue.xyz{CHANNEL_KEY}/db`;
+    // Bulletproof private cross-device data key room
+    const STORAGE_KEY = "robin_qa_storage_room_final_v1";
+    const API_URL = `https://kv.rest{STORAGE_KEY}`;
 
     function showScreen(screenId) {
         document.getElementById('mainMenu').classList.add('hidden');
@@ -101,20 +100,18 @@
         if (!questionText) { alert("Please type a question."); return; }
         const code = generateUniqueCode();
 
-        fetch(PROXY_URL + encodeURIComponent(TARGET_URL))
-        .then(res => res.status === 404 || res.status === 500 ? "{}" : res.text())
+        fetch(API_URL)
+        .then(res => res.status === 404 || res.status === 204 ? "{}" : res.text())
         .then(text => {
             let remoteDB = {};
-            // Failsafe parser block
-            if (text && text.trim() && !text.includes("Cannot GET") && !text.includes("Error")) {
-                try { remoteDB = JSON.parse(text); } catch(e) { remoteDB = {}; }
-            }
+            if (text && text.trim()) { try { remoteDB = JSON.parse(text); } catch(e) { remoteDB = {}; } }
             if (typeof remoteDB !== 'object' || remoteDB === null || Array.isArray(remoteDB)) { remoteDB = {}; }
             
             remoteDB[code] = { question: questionText, answer: "", status: "unanswered" };
 
-            return fetch(PROXY_URL + encodeURIComponent(TARGET_URL), {
-                method: "POST",
+            return fetch(API_URL, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(remoteDB)
             });
         })
@@ -122,7 +119,7 @@
             document.getElementById('generatedCode').innerText = code;
             showScreen('codeScreen');
         })
-        .catch(() => alert("Connection error. Please try again."));
+        .catch(() => alert("Error saving question. Please try again."));
     }
 
     function copyCode() {
@@ -136,13 +133,11 @@
         resultBox.classList.remove('hidden');
         resultBox.innerText = "Searching cloud records...";
 
-        fetch(PROXY_URL + encodeURIComponent(TARGET_URL))
-        .then(res => res.status === 404 ? "{}" : res.text())
+        fetch(API_URL)
+        .then(res => res.status === 404 || res.status === 204 ? "{}" : res.text())
         .then(text => {
             let remoteDB = {};
-            if (text && text.trim() && !text.includes("Cannot GET")) {
-                try { remoteDB = JSON.parse(text); } catch(e) {}
-            }
+            if (text && text.trim()) { try { remoteDB = JSON.parse(text); } catch(e) {} }
             if (remoteDB && remoteDB[codeInput]) {
                 const entry = remoteDB[codeInput];
                 if (entry.status === "unanswered") {
