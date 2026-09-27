@@ -59,8 +59,8 @@
     </div>
 </div>
 <script>
-    // Updated key links directly into your unique, secure cloud matrix channel space
-    const CHANNEL_KEY = "robin_private_qa_vault_948271501_v2026";
+    // Rotated channel key to force a clean, unbugged cloud initialization sync
+    const CHANNEL_KEY = "robin_secure_qa_hub_v994821";
     const PROXY_URL = "https://corsproxy.io?";
     const TARGET_URL = `https://keyvalue.xyz{CHANNEL_KEY}/db`;
 
@@ -102,11 +102,14 @@
         const code = generateUniqueCode();
 
         fetch(PROXY_URL + encodeURIComponent(TARGET_URL))
-        .then(res => res.status === 404 ? "{}" : res.text())
+        .then(res => res.status === 404 || res.status === 500 ? "{}" : res.text())
         .then(text => {
             let remoteDB = {};
-            try { remoteDB = JSON.parse(text); } catch(e) { remoteDB = {}; }
-            if (typeof remoteDB !== 'object' || remoteDB === null) { remoteDB = {}; }
+            // Failsafe parser block
+            if (text && text.trim() && !text.includes("Cannot GET") && !text.includes("Error")) {
+                try { remoteDB = JSON.parse(text); } catch(e) { remoteDB = {}; }
+            }
+            if (typeof remoteDB !== 'object' || remoteDB === null || Array.isArray(remoteDB)) { remoteDB = {}; }
             
             remoteDB[code] = { question: questionText, answer: "", status: "unanswered" };
 
@@ -134,10 +137,12 @@
         resultBox.innerText = "Searching cloud records...";
 
         fetch(PROXY_URL + encodeURIComponent(TARGET_URL))
-        .then(res => res.text())
+        .then(res => res.status === 404 ? "{}" : res.text())
         .then(text => {
             let remoteDB = {};
-            try { remoteDB = JSON.parse(text); } catch(e) {}
+            if (text && text.trim() && !text.includes("Cannot GET")) {
+                try { remoteDB = JSON.parse(text); } catch(e) {}
+            }
             if (remoteDB && remoteDB[codeInput]) {
                 const entry = remoteDB[codeInput];
                 if (entry.status === "unanswered") {
