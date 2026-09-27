@@ -7,62 +7,32 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f5f5f7;
-            color: #1d1d1f;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            background-color: #f5f5f7; color: #1d1d1f; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
         }
         .container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
+            background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); text-align: center; width: 100%; max-width: 400px; box-sizing: border-box;
         }
         h2 { font-size: 24px; font-weight: 600; margin-bottom: 20px; }
         .btn-group { display: flex; flex-direction: column; gap: 12px; }
         button {
-            padding: 14px; font-size: 16px; font-weight: 500;
-            border: none; border-radius: 10px; cursor: pointer;
-            transition: background-color 0.2s;
+            padding: 14px; font-size: 16px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.2s;
         }
         .btn-primary { background-color: #0071e3; color: #ffffff; }
         .btn-primary:hover { background-color: #0077ed; }
         .btn-secondary { background-color: #e8e8ed; color: #1d1d1f; }
         .btn-secondary:hover { background-color: #d2d2d7; }
-        .btn-back {
-            background-color: transparent; color: #0071e3;
-            font-size: 14px; margin-top: 15px; text-decoration: underline;
-        }
+        .btn-back { background-color: transparent; color: #0071e3; font-size: 14px; margin-top: 15px; text-decoration: underline; }
         input[type="text"], textarea {
-            width: 100%; padding: 12px; margin-bottom: 5px;
-            border: 1px solid #d2d2d7; border-radius: 8px;
-            font-size: 16px; box-sizing: border-box; outline: none;
-            font-family: inherit;
+            width: 100%; padding: 12px; margin-bottom: 5px; border: 1px solid #d2d2d7; border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none; font-family: inherit;
         }
         textarea { resize: none; height: 100px; }
         .word-counter { text-align: right; font-size: 12px; color: #6e6e73; margin-bottom: 15px; }
         .hidden { display: none; }
         .code-display {
-            background-color: #f5f5f7; padding: 15px; border-radius: 8px;
-            font-size: 22px; font-weight: 700; letter-spacing: 2px;
-            margin: 15px 0; display: inline-flex; align-items: center;
-            justify-content: center; gap: 10px; width: 80%;
+            background-color: #f5f5f7; padding: 15px; border-radius: 8px; font-size: 22px; font-weight: 700; letter-spacing: 2px; margin: 15px 0; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 80%;
         }
-        .btn-copy {
-            background-color: #0071e3; color: white; font-size: 12px;
-            padding: 6px 12px; border-radius: 6px; font-weight: normal; letter-spacing: normal;
-        }
-        .status-box {
-            margin-top: 15px; padding: 15px; border-radius: 8px;
-            background-color: #f5f5f7; text-align: left; font-size: 15px;
-        }
+        .btn-copy { background-color: #0071e3; color: white; font-size: 12px; padding: 6px 12px; border-radius: 6px; font-weight: normal; letter-spacing: normal; }
+        .status-box { margin-top: 15px; padding: 15px; border-radius: 8px; background-color: #f5f5f7; text-align: left; font-size: 15px; }
         .status-unanswered { color: #bf4800; font-weight: 600; }
     </style>
 </head>
@@ -137,9 +107,7 @@
     function generateUniqueCode() {
         const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         let code = '';
-        for (let i = 0; i < 6; i++) {
-            code += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
+        for (let i = 0; i < 6; i++) { code += characters.charAt(Math.floor(Math.random() * characters.length)); }
         return code;
     }
 
@@ -149,15 +117,16 @@
 
         const code = generateUniqueCode();
 
-        fetch(`https://jsonbin.io{BIN_ID}/latest`, {
-            headers: { "X-Master-Key": API_KEY }
+        // X-Bin-Meta: false turns off system wrapper text so raw code doesn't error out
+        fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            headers: { "X-Master-Key": API_KEY, "X-Bin-Meta": "false" }
         })
         .then(res => res.json())
         .then(data => {
-            let remoteDB = data.record || {};
+            let remoteDB = data || {};
             remoteDB[code] = { question: questionText, answer: "", status: "unanswered" };
 
-            return fetch(`https://jsonbin.io{BIN_ID}`, {
+            return fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
                 body: JSON.stringify(remoteDB)
@@ -183,12 +152,12 @@
         resultBox.classList.remove('hidden');
         resultBox.innerText = "Searching cloud records...";
 
-        fetch(`https://jsonbin.io{BIN_ID}/latest`, {
-            headers: { "X-Master-Key": API_KEY }
+        fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+            headers: { "X-Master-Key": API_KEY, "X-Bin-Meta": "false" }
         })
         .then(res => res.json())
         .then(data => {
-            let remoteDB = data.record || {};
+            let remoteDB = data || {};
             if (remoteDB[codeInput]) {
                 const entry = remoteDB[codeInput];
                 if (entry.status === "unanswered") {
@@ -200,7 +169,7 @@
                 resultBox.innerHTML = `<span style="color: #ff3b30; font-weight:600;">Code not found.</span>`;
             }
         })
-        .catch(() => resultBox.innerText = "Error pulling live cloud text updates.");
+        .catch(() => resultBox.innerText = "Error pulling updates.");
     }
 </script>
 </body>
