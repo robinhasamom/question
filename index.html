@@ -5,39 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Question & Answer Portal</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f5f5f7; color: #1d1d1f; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
-        }
-        .container {
-            background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); text-align: center; width: 100%; max-width: 400px; box-sizing: border-box;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f5f5f7; color: #1d1d1f; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); text-align: center; width: 100%; max-width: 400px; box-sizing: border-box; }
         h2 { font-size: 24px; font-weight: 600; margin-bottom: 20px; }
         .btn-group { display: flex; flex-direction: column; gap: 12px; }
-        button {
-            padding: 14px; font-size: 16px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.2s;
-        }
+        button { padding: 14px; font-size: 16px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.2s; }
         .btn-primary { background-color: #0071e3; color: #ffffff; }
         .btn-primary:hover { background-color: #0077ed; }
         .btn-secondary { background-color: #e8e8ed; color: #1d1d1f; }
         .btn-secondary:hover { background-color: #d2d2d7; }
         .btn-back { background-color: transparent; color: #0071e3; font-size: 14px; margin-top: 15px; text-decoration: underline; }
-        input[type="text"], textarea {
-            width: 100%; padding: 12px; margin-bottom: 5px; border: 1px solid #d2d2d7; border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none; font-family: inherit;
-        }
+        input[type="text"], textarea { width: 100%; padding: 12px; margin-bottom: 5px; border: 1px solid #d2d2d7; border-radius: 8px; font-size: 16px; box-sizing: border-box; outline: none; font-family: inherit; }
         textarea { resize: none; height: 100px; }
         .word-counter { text-align: right; font-size: 12px; color: #6e6e73; margin-bottom: 15px; }
         .hidden { display: none; }
-        .code-display {
-            background-color: #f5f5f7; padding: 15px; border-radius: 8px; font-size: 22px; font-weight: 700; letter-spacing: 2px; margin: 15px 0; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 80%;
-        }
-        .btn-copy { background-color: #0071e3; color: white; font-size: 12px; padding: 6px 12px; border-radius: 6px; font-weight: normal; letter-spacing: normal; }
+        .code-display { background-color: #f5f5f7; padding: 15px; border-radius: 8px; font-size: 22px; font-weight: 700; letter-spacing: 2px; margin: 15px 0; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 80%; }
+        .btn-copy { background-color: #0071e3; color: white; font-size: 12px; padding: 6px 12px; border-radius: 6px; }
         .status-box { margin-top: 15px; padding: 15px; border-radius: 8px; background-color: #f5f5f7; text-align: left; font-size: 15px; }
         .status-unanswered { color: #bf4800; font-weight: 600; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <div id="mainMenu">
         <h2>Welcome</h2>
@@ -46,7 +34,6 @@
             <button class="btn-secondary" onclick="showScreen('findScreen')">Find answer</button>
         </div>
     </div>
-
     <div id="askScreen" class="hidden">
         <h2>Ask a Question</h2>
         <textarea id="questionInput" placeholder="Type your question here..." oninput="checkWordCount(this)"></textarea>
@@ -54,7 +41,6 @@
         <button class="btn-primary" style="width: 100%;" onclick="submitQuestion()">Submit</button>
         <button class="btn-back" onclick="goHome()">Back</button>
     </div>
-
     <div id="codeScreen" class="hidden">
         <h2>Your Saved Code</h2>
         <p style="font-size: 14px; color: #6e6e73;">Save this code to check your answer later:</p>
@@ -64,7 +50,6 @@
         </div>
         <button class="btn-secondary" style="width: 100%;" onclick="goHome()">Done</button>
     </div>
-
     <div id="findScreen" class="hidden">
         <h2>Find Answer</h2>
         <input type="text" id="codeInput" placeholder="Enter 6-digit code">
@@ -73,9 +58,8 @@
         <button class="btn-back" onclick="goHome()">Back</button>
     </div>
 </div>
-
 <script>
-    const BIN_ID = "66f6345fe41b4d34e4373eb4";
+    const BIN_ID = "6ab8a0edac6210605af9cf59";
     const API_KEY = "\$2a\$10\$uMtIlsOcR9egMfn267bBIu2tmUPQ4TLVj856cEbkIToKzPk0VAvcO";
 
     function showScreen(screenId) {
@@ -97,9 +81,8 @@
     function checkWordCount(textarea) {
         let words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0);
         if (words.length > 50) {
-            let trimmed = textarea.value.split(/\s+/).slice(0, 50).join(" ");
-            textarea.value = trimmed;
-            words = trimmed.trim().split(/\s+/).filter(w => w.length > 0);
+            textarea.value = textarea.value.split(/\s+/).slice(0, 50).join(" ");
+            words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0);
         }
         document.getElementById('wordCountLabel').innerText = `Words: ${words.length} / 50`;
     }
@@ -114,7 +97,6 @@
     function submitQuestion() {
         const questionText = document.getElementById('questionInput').value.trim();
         if (!questionText) { alert("Please type a question."); return; }
-
         const code = generateUniqueCode();
 
         fetch(`https://jsonbin.io{BIN_ID}/latest`, {
@@ -122,8 +104,8 @@
         })
         .then(res => res.json())
         .then(data => {
-            // Check if the data has a nested .record wrapper from JSONBin's responses
-            let remoteDB = data.record ? data.record : data;
+            let remoteDB = data && data.record ? data.record : data;
+            if (typeof remoteDB !== 'object' || Array.isArray(remoteDB) || remoteDB === null) { remoteDB = {}; }
             remoteDB[code] = { question: questionText, answer: "", status: "unanswered" };
 
             return fetch(`https://jsonbin.io{BIN_ID}`, {
@@ -141,15 +123,13 @@
     }
 
     function copyCode() {
-        const codeText = document.getElementById('generatedCode').innerText;
-        navigator.clipboard.writeText(codeText).then(() => alert("Code copied!"));
+        navigator.clipboard.writeText(document.getElementById('generatedCode').innerText).then(() => alert("Code copied!"));
     }
 
     function searchAnswer() {
         const codeInput = document.getElementById('codeInput').value.trim().toUpperCase();
         const resultBox = document.getElementById('answerResult');
         if (!codeInput) { alert("Please enter a code."); return; }
-
         resultBox.classList.remove('hidden');
         resultBox.innerText = "Searching cloud records...";
 
@@ -158,8 +138,8 @@
         })
         .then(res => res.json())
         .then(data => {
-            let remoteDB = data.record ? data.record : data;
-            if (remoteDB[codeInput]) {
+            let remoteDB = data && data.record ? data.record : data;
+            if (remoteDB && remoteDB[codeInput]) {
                 const entry = remoteDB[codeInput];
                 if (entry.status === "unanswered") {
                     resultBox.innerHTML = `<strong>Question:</strong> ${entry.question}<br><br><span class="status-unanswered">The question is not answered</span>`;
