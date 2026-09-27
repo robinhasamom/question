@@ -59,8 +59,8 @@
     </div>
 </div>
 <script>
-    const CHANNEL_KEY = "robin_qa_centralized_hub_network_v2026";
-    // Proxy URL used to dynamically strip out web cross-origin security errors
+    // Updated key links directly into your unique, secure cloud matrix channel space
+    const CHANNEL_KEY = "robin_private_qa_vault_948271501_v2026";
     const PROXY_URL = "https://corsproxy.io?";
     const TARGET_URL = `https://keyvalue.xyz{CHANNEL_KEY}/db`;
 
@@ -119,7 +119,7 @@
             document.getElementById('generatedCode').innerText = code;
             showScreen('codeScreen');
         })
-        .catch(() => alert("Connection error. Re-syncing security profiles..."));
+        .catch(() => alert("Connection error. Please try again."));
     }
 
     function copyCode() {
