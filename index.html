@@ -59,8 +59,8 @@
     </div>
 </div>
 <script>
-    const BIN_ID = "6ab8a0edac6210605af9cf59";
-    const API_KEY = "\$2a\$10\$uMtIlsOcR9egMfn267bBIu2tmUPQ4TLVj856cEbkIToKzPk0VAvcO";
+    // Public anonymous database namespace mapping
+    const STORAGE_KEY = "robin_qa_global_store_2026";
 
     function showScreen(screenId) {
         document.getElementById('mainMenu').classList.add('hidden');
@@ -99,23 +99,19 @@
         if (!questionText) { alert("Please type a question."); return; }
         const code = generateUniqueCode();
 
-        fetch(`https://jsonbin.io{BIN_ID}/latest`, {
-            headers: { "X-Master-Key": API_KEY, "X-Bin-Meta": "false" }
-        })
-        .then(res => res.json())
+        fetch(`https://kvstore.io{STORAGE_KEY}`)
+        .then(res => res.status === 404 ? {} : res.json())
         .then(data => {
-            let remoteDB = data && data.record ? data.record : data;
-            if (typeof remoteDB !== 'object' || Array.isArray(remoteDB) || remoteDB === null) { remoteDB = {}; }
+            let remoteDB = data || {};
             remoteDB[code] = { question: questionText, answer: "", status: "unanswered" };
 
-            return fetch(`https://jsonbin.io{BIN_ID}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+            return fetch(`https://kvstore.io{STORAGE_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(remoteDB)
             });
         })
-        .then(res => {
-            if(!res.ok) throw new Error();
+        .then(() => {
             document.getElementById('generatedCode').innerText = code;
             showScreen('codeScreen');
         })
@@ -133,12 +129,9 @@
         resultBox.classList.remove('hidden');
         resultBox.innerText = "Searching cloud records...";
 
-        fetch(`https://jsonbin.io{BIN_ID}/latest`, {
-            headers: { "X-Master-Key": API_KEY, "X-Bin-Meta": "false" }
-        })
+        fetch(`https://kvstore.io{STORAGE_KEY}`)
         .then(res => res.json())
-        .then(data => {
-            let remoteDB = data && data.record ? data.record : data;
+        .then(remoteDB => {
             if (remoteDB && remoteDB[codeInput]) {
                 const entry = remoteDB[codeInput];
                 if (entry.status === "unanswered") {
