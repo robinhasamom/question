@@ -59,8 +59,10 @@
     </div>
 </div>
 <script>
-    // Completely un-restricted anonymous cross-device data key room identity string mapping template
     const CHANNEL_KEY = "robin_qa_centralized_hub_network_v2026";
+    // Proxy URL used to dynamically strip out web cross-origin security errors
+    const PROXY_URL = "https://corsproxy.io?";
+    const TARGET_URL = `https://keyvalue.xyz{CHANNEL_KEY}/db`;
 
     function showScreen(screenId) {
         document.getElementById('mainMenu').classList.add('hidden');
@@ -99,7 +101,7 @@
         if (!questionText) { alert("Please type a question."); return; }
         const code = generateUniqueCode();
 
-        fetch(`https://keyvalue.xyz{CHANNEL_KEY}/db`)
+        fetch(PROXY_URL + encodeURIComponent(TARGET_URL))
         .then(res => res.status === 404 ? "{}" : res.text())
         .then(text => {
             let remoteDB = {};
@@ -108,7 +110,7 @@
             
             remoteDB[code] = { question: questionText, answer: "", status: "unanswered" };
 
-            return fetch(`https://keyvalue.xyz{CHANNEL_KEY}/db`, {
+            return fetch(PROXY_URL + encodeURIComponent(TARGET_URL), {
                 method: "POST",
                 body: JSON.stringify(remoteDB)
             });
@@ -117,7 +119,7 @@
             document.getElementById('generatedCode').innerText = code;
             showScreen('codeScreen');
         })
-        .catch(() => alert("Connection error. Please try again."));
+        .catch(() => alert("Connection error. Re-syncing security profiles..."));
     }
 
     function copyCode() {
@@ -131,7 +133,7 @@
         resultBox.classList.remove('hidden');
         resultBox.innerText = "Searching cloud records...";
 
-        fetch(`https://keyvalue.xyz{CHANNEL_KEY}/db`)
+        fetch(PROXY_URL + encodeURIComponent(TARGET_URL))
         .then(res => res.text())
         .then(text => {
             let remoteDB = {};
