@@ -117,22 +117,23 @@
 
         const code = generateUniqueCode();
 
-        // X-Bin-Meta: false turns off system wrapper text so raw code doesn't error out
-        fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        fetch(`https://jsonbin.io{BIN_ID}/latest`, {
             headers: { "X-Master-Key": API_KEY, "X-Bin-Meta": "false" }
         })
         .then(res => res.json())
         .then(data => {
-            let remoteDB = data || {};
+            // Check if the data has a nested .record wrapper from JSONBin's responses
+            let remoteDB = data.record ? data.record : data;
             remoteDB[code] = { question: questionText, answer: "", status: "unanswered" };
 
-            return fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+            return fetch(`https://jsonbin.io{BIN_ID}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
                 body: JSON.stringify(remoteDB)
             });
         })
-        .then(() => {
+        .then(res => {
+            if(!res.ok) throw new Error();
             document.getElementById('generatedCode').innerText = code;
             showScreen('codeScreen');
         })
@@ -152,12 +153,12 @@
         resultBox.classList.remove('hidden');
         resultBox.innerText = "Searching cloud records...";
 
-        fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        fetch(`https://jsonbin.io{BIN_ID}/latest`, {
             headers: { "X-Master-Key": API_KEY, "X-Bin-Meta": "false" }
         })
         .then(res => res.json())
         .then(data => {
-            let remoteDB = data || {};
+            let remoteDB = data.record ? data.record : data;
             if (remoteDB[codeInput]) {
                 const entry = remoteDB[codeInput];
                 if (entry.status === "unanswered") {
